@@ -119,13 +119,13 @@ export default defineComponent({
           background: rgba(255, 106, 0, 0.7);
         }
       }
-      .error {
-        margin: 0;
-        text-align: center;
-        color: red;
-        font-size: 16pх;
-        padding-bottom: 10px;
-      }
+    }
+    .error {
+      text-align: center;
+      background: #181c1d;
+      color: red;
+      font-size: 16pх;
+      margin: 0px 10px;
     }
     .change-page {
       display: flex;
