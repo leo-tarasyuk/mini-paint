@@ -27,11 +27,11 @@ import { defineComponent, ref, computed } from "vue";
 import { useStore } from "../store";
 export default defineComponent({
   setup() {
-    const store = useStore();
+    const { getters } = useStore();
     const email = ref("");
     const password = ref("");
 
-    const getError = computed(() => store.getters.getError);
+    const getError = computed(() => getters.getError);
 
     return {
       email,

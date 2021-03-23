@@ -1,10 +1,11 @@
 import { GetterTree } from "vuex";
 import { State } from "./state";
+import { Pictures } from "../types";
 
 type Getters = {
   getUser(state: State): string;
   getError(state: State): string;
-  getPictures(state: State): Array<Record<string, string>>;
+  getPictures(state: State): Array<Pictures>;
 };
 
 export type GettersType = {

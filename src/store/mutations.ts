@@ -1,19 +1,14 @@
 import { MutationTree, CommitOptions } from "vuex";
 import { MutationTypes } from "./mutation-types";
+import { Picture, Pictures } from "../types";
 import { State } from "./state";
 
 export type Mutations<S = State> = {
-  [MutationTypes.REGISTER_USER](state: S, payload: string | undefined): void;
-  [MutationTypes.LOGIN_USER](state: S, payload: string | undefined): void;
-  [MutationTypes.SET_ERROR](state: S, payload: string): void;
-  [MutationTypes.CREATE_PICTURE](
-    state: S,
-    payload: Record<string, string>
-  ): void;
-  [MutationTypes.SHOW_PICTURES](
-    state: S,
-    payload: Array<Record<string, string>>
-  ): void;
+  [MutationTypes.registerUser](state: S, payload: string | undefined): void;
+  [MutationTypes.loginUser](state: S, payload: string | undefined): void;
+  [MutationTypes.setError](state: S, payload: string): void;
+  [MutationTypes.createPicture](state: S, payload: Picture): void;
+  [MutationTypes.showPictures](state: S, payload: Array<Pictures>): void;
 };
 
 export type MutationsType = {
@@ -25,25 +20,19 @@ export type MutationsType = {
 };
 
 export const mutations: MutationTree<State> & Mutations = {
-  [MutationTypes.REGISTER_USER](state: State, payload: string) {
+  [MutationTypes.registerUser](state: State, payload: string) {
     state.user = payload;
   },
-  [MutationTypes.LOGIN_USER](state: State, payload: string) {
+  [MutationTypes.loginUser](state: State, payload: string) {
     state.user = payload;
   },
-  [MutationTypes.SET_ERROR](state: State, payload: string) {
+  [MutationTypes.setError](state: State, payload: string) {
     state.error = payload;
   },
-  [MutationTypes.CREATE_PICTURE](
-    state: State,
-    payload: Record<string, string>
-  ) {
+  [MutationTypes.createPicture](state: State, payload: Picture) {
     state.picture = payload;
   },
-  [MutationTypes.SHOW_PICTURES](
-    state: State,
-    payload: Array<Record<string, string>>
-  ) {
+  [MutationTypes.showPictures](state: State, payload: Array<Pictures>) {
     state.pictures = payload;
   }
 };

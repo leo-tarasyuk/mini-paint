@@ -1,13 +1,18 @@
+import { Picture, Pictures } from "../types";
+
 export type State = {
   user: string;
   error: string;
-  picture: Record<string, string>;
-  pictures: Array<Record<string, string>>;
+  picture: Picture;
+  pictures: Array<Pictures>;
 };
 
 export const state: State = {
   user: "",
   error: "",
-  picture: {},
+  picture: {
+    img: "",
+    name: ""
+  },
   pictures: []
 };

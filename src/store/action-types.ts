@@ -1,4 +1,4 @@
-export enum MutationTypes {
+export enum ActionTypes {
   registerUser = "registerUser",
   loginUser = "loginUser",
   setError = "setError",

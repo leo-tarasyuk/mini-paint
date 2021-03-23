@@ -6,32 +6,30 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
-import { MutationTypes } from "../store/mutation-types";
+import { ActionTypes } from "../store/action-types";
 import Form from "../components/Form.vue";
 export default defineComponent({
   components: {
     Form
   },
   setup() {
-    const store = useStore();
+    const { dispatch } = useStore();
     const router = useRouter();
     const name = ref("Login");
     const text = ref("Need an account?");
     const route = ref("/register");
 
-    const login = (email: string, password: string): void => {
-      store
-        .dispatch(MutationTypes.LOGIN_USER, {
-          email,
-          password
-        })
-        .then((): void => {
-          store.dispatch(MutationTypes.SET_ERROR, "");
-          router.replace({ name: "Home" });
-        })
-        .catch((e: Error): void => {
-          store.dispatch(MutationTypes.SET_ERROR, e.message);
-        });
+    const login = async (email: string, password: string) => {
+      const mistake: string | null = await dispatch(ActionTypes.loginUser, {
+        email,
+        password
+      });
+      if (mistake) {
+        dispatch(ActionTypes.setError, mistake);
+      } else {
+        dispatch(ActionTypes.setError, "");
+        router.push("/");
+      }
     };
 
     return {

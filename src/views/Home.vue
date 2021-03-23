@@ -17,28 +17,25 @@
 import { defineComponent, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../store";
-import { MutationTypes } from "../store/mutation-types";
+import { ActionTypes } from "../store/action-types";
 import firebase from "firebase/app";
 import "firebase/auth";
 
 export default defineComponent({
   setup() {
-    const store = useStore();
+    const { getters, dispatch } = useStore();
     const router = useRouter();
-    const getPictures = computed(() => store.getters.getPictures);
+    const getPictures = computed(() => getters.getPictures);
 
     onMounted((): void => {
-      store.state.pictures = [];
-      store.dispatch(MutationTypes.SHOW_PICTURES, []);
+      dispatch(ActionTypes.showPictures, []);
     });
 
     const signOut = async (): Promise<void> => {
       await firebase.auth().signOut();
-      router.replace({ name: "Login" });
+      router.replace("/login");
     };
-    const createFile = (): void => {
-      router.replace({ name: "Image" });
-    };
+    const createFile = () => router.push("/image");
 
     return {
       signOut,

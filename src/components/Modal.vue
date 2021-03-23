@@ -1,12 +1,6 @@
 <template>
   <div class="modal" @click="showModalWindow(false)">
-    <div
-      @click="
-        event => {
-          event.stopPropagation();
-        }
-      "
-    >
+    <div @click="stopProp">
       <div class="modal-head">
         <span class="close" @click="showModalWindow(false)"></span>
       </div>
@@ -15,8 +9,8 @@
           Name :
           <input v-model="name" class="name" type="text" />
         </div>
-        <div class="buttons" @click="downloadImage({ img, name })">
-          <button class="save">
+        <div class="buttons">
+          <button class="save" @click="downloadImage({ img, name })">
             Save
           </button>
         </div>
@@ -29,7 +23,8 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
-import { MutationTypes } from "../store/mutation-types";
+import { ActionTypes } from "../store/action-types";
+import { Picture } from "../types";
 export default defineComponent({
   props: {
     img: {
@@ -38,25 +33,32 @@ export default defineComponent({
     }
   },
   emits: ["stateChanged"],
-  setup() {
-    const store = useStore();
+  setup(props, { emit }) {
+    const { dispatch } = useStore();
     const router = useRouter();
     const name = ref("");
 
-    const downloadImage = (picture: Record<string, string>): void => {
-      store.dispatch(MutationTypes.CREATE_PICTURE, picture);
-      router.replace({ name: "Home" });
+    const downloadImage = (picture: Picture): void => {
+      if (name.value) {
+        dispatch(ActionTypes.createPicture, picture);
+        router.push("/");
+      }
+    };
+
+    const stopProp = (event: Event): void => {
+      event.stopPropagation();
+    };
+
+    const showModalWindow = (state: boolean): void => {
+      emit("stateChanged", state);
     };
 
     return {
       name,
-      downloadImage
+      downloadImage,
+      showModalWindow,
+      stopProp
     };
-  },
-  methods: {
-    showModalWindow(state: boolean): void {
-      this.$emit("stateChanged", state);
-    }
   }
 });
 </script>

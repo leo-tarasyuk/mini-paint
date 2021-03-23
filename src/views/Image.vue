@@ -23,31 +23,17 @@
             </button>
           </div>
           <div v-if="isSizeWindow" class="options-for-figure">
-            <button @click="size = 1">1</button>
-            <button @click="size = 5">5</button>
-            <button @click="size = 10">10</button>
-            <button @click="size = 20">20</button>
+            <button v-for="item in allSize" :key="item" @click="size = item">
+              {{ item }}
+            </button>
           </div>
           <div v-if="isColorWindow" class="options-for-figure">
             <button
-              class="btn-red btn-color"
-              @click="color = 'rgba(255,0,0,1)'"
-            ></button>
-            <button
-              class="btn-green btn-color"
-              @click="color = 'rgba(0,255,0,1)'"
-            ></button>
-            <button
-              class="btn-blue btn-color"
-              @click="color = 'rgba(0,0,255,1)'"
-            ></button>
-            <button
-              class="btn-black btn-color"
-              @click="color = 'rgba(0,0,0,1)'"
-            ></button>
-            <button
-              class="btn-white btn-color"
-              @click="color = 'rgba(255,255,255,1)'"
+              v-for="item in allColor"
+              :key="item"
+              class="btn-color"
+              :style="{ backgroundColor: item }"
+              @click="color = item"
             ></button>
           </div>
           <div class="options-for-figure">
@@ -81,16 +67,22 @@ export default defineComponent({
     const startX = ref(0);
     const startY = ref(0);
     const color = ref("rgba(0,0,0,1)");
+    const allColor = ref([
+      "rgba(255,0,0,1)",
+      "rgba(0,255,0,1)",
+      "rgba(0,0,255,1)",
+      "rgba(0,0,0,1)",
+      "rgba(255,255,255,1)"
+    ]);
     const size = ref(1);
+    const allSize = ref([1, 5, 10, 20]);
     const isSizeWindow = ref(false);
     const isColorWindow = ref(false);
     const figure = ref("pencil");
     const stateForShowModal = ref(false);
     const img = ref("");
 
-    const backHome = (): void => {
-      router.replace({ name: "Home" });
-    };
+    const backHome = () => router.push("/");
     const savePicture = (): void => {
       const can = canvas.value;
       if (can) {
@@ -201,7 +193,9 @@ export default defineComponent({
       startX,
       startY,
       color,
+      allColor,
       size,
+      allSize,
       isSizeWindow,
       isColorWindow,
       figure,
@@ -318,21 +312,6 @@ main {
       .btn-color {
         width: 20px;
         height: 20px;
-      }
-      .btn-red {
-        background-color: red;
-      }
-      .btn-green {
-        background-color: green;
-      }
-      .btn-blue {
-        background-color: blue;
-      }
-      .btn-white {
-        background-color: white;
-      }
-      .btn-black {
-        background-color: black;
       }
       .save {
         background-color: green;

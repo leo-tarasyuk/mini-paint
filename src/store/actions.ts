@@ -1,6 +1,8 @@
 import { ActionContext, ActionTree, DispatchOptions } from "vuex";
 import { Mutations } from "./mutations";
 import { MutationTypes } from "./mutation-types";
+import { ActionTypes } from "./action-types";
+import { Picture, Pictures, User } from "../types";
 import { State } from "./state";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -22,69 +24,75 @@ export type ActionsType = {
 };
 
 interface Actions {
-  [MutationTypes.REGISTER_USER](
+  [ActionTypes.registerUser](
     { commit }: AugmentedActionContext,
-    payload: Record<string, string>
-  ): Promise<void>;
-  [MutationTypes.LOGIN_USER](
+    payload: User
+  ): Promise<string | null>;
+  [ActionTypes.loginUser](
     { commit }: AugmentedActionContext,
-    payload: Record<string, string>
-  ): Promise<void>;
-  [MutationTypes.SET_ERROR](
+    payload: User
+  ): Promise<string | null>;
+  [ActionTypes.setError](
     { commit, state }: AugmentedActionContext,
     payload: string
   ): void;
-  [MutationTypes.CREATE_PICTURE](
+  [ActionTypes.createPicture](
     { commit, state }: AugmentedActionContext,
-    payload: Record<string, string>
+    payload: Picture
   ): void;
-  [MutationTypes.SHOW_PICTURES](
+  [ActionTypes.showPictures](
     { commit, state }: AugmentedActionContext,
-    payload: Array<Record<string, string>>
+    payload: Array<Pictures>
   ): void;
 }
 
 export const actions: ActionTree<State, State> & Actions = {
-  async [MutationTypes.REGISTER_USER](
-    { commit },
-    payload: Record<string, string>
-  ) {
+  async [ActionTypes.registerUser]({ commit }, payload: User) {
     const user = await firebase
       .auth()
-      .createUserWithEmailAndPassword(payload.email, payload.password);
+      .createUserWithEmailAndPassword(payload.email, payload.password)
+      .then(data => {
+        commit(MutationTypes.registerUser, data.user?.uid);
+        return null;
+      })
+      .catch((e: Error) => {
+        return e.message;
+      });
 
-    commit(MutationTypes.REGISTER_USER, user.user?.uid);
+    return user;
   },
-  async [MutationTypes.LOGIN_USER](
-    { commit },
-    payload: Record<string, string>
-  ) {
+  async [ActionTypes.loginUser]({ commit }, payload: User) {
     const user = await firebase
       .auth()
-      .signInWithEmailAndPassword(payload.email, payload.password);
+      .signInWithEmailAndPassword(payload.email, payload.password)
+      .then(data => {
+        commit(MutationTypes.loginUser, data.user?.uid);
+        return null;
+      })
+      .catch((e: Error) => {
+        return e.message;
+      });
 
-    commit(MutationTypes.LOGIN_USER, user.user?.uid);
+    return user;
   },
-  [MutationTypes.SET_ERROR]({ commit }, payload: string) {
-    commit(MutationTypes.SET_ERROR, payload);
+  [ActionTypes.setError]({ commit }, payload: string) {
+    commit(MutationTypes.setError, payload);
   },
-  async [MutationTypes.CREATE_PICTURE](
-    { state },
-    payload: Record<string, string>
-  ) {
+  async [ActionTypes.createPicture]({ state }, payload: Pictures) {
     payload.user = state.user;
     await firebase
       .database()
       .ref("pictures")
       .push(payload);
   },
-  async [MutationTypes.SHOW_PICTURES]({ commit, state }) {
+  async [ActionTypes.showPictures]({ commit, state }) {
+    state.pictures = [];
     const task = await firebase
       .database()
       .ref("pictures")
       .once("value");
     const tasks = task.val();
-    const data: Array<Record<string, string>> = [];
+    const data: Array<Pictures> = [];
 
     if (tasks !== null) {
       Object.keys(tasks).forEach((key: string): void => {
@@ -94,6 +102,6 @@ export const actions: ActionTree<State, State> & Actions = {
       });
     }
 
-    commit(MutationTypes.SHOW_PICTURES, data);
+    commit(MutationTypes.showPictures, data);
   }
 };
