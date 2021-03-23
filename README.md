@@ -47,6 +47,7 @@ sass-loader
         - components (.vue)
         - router (index.ts)
         - store (.ts)
+        - types (index.ts)
         - views (.vue)
         - App.vue
         - main.ts
