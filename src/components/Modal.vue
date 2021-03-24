@@ -25,6 +25,7 @@ import { useStore } from "../store";
 import { useRouter } from "vue-router";
 import { ActionTypes } from "../store/action-types";
 import { Picture } from "../types";
+import { AppRoutes } from "../router";
 export default defineComponent({
   props: {
     img: {
@@ -41,7 +42,7 @@ export default defineComponent({
     const downloadImage = (picture: Picture): void => {
       if (name.value) {
         dispatch(ActionTypes.createPicture, picture);
-        router.push("/");
+        router.push(AppRoutes.home);
       }
     };
 

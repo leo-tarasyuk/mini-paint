@@ -7,6 +7,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
 import { ActionTypes } from "../store/action-types";
+import { AppRoutes } from "../router";
 import Form from "../components/Form.vue";
 export default defineComponent({
   components: {
@@ -28,7 +29,7 @@ export default defineComponent({
         dispatch(ActionTypes.setError, mistake);
       } else {
         dispatch(ActionTypes.setError, "");
-        router.push("/");
+        router.push(AppRoutes.home);
       }
     };
 

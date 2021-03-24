@@ -18,6 +18,7 @@ import { defineComponent, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../store";
 import { ActionTypes } from "../store/action-types";
+import { AppRoutes } from "../router";
 import firebase from "firebase/app";
 import "firebase/auth";
 
@@ -33,9 +34,9 @@ export default defineComponent({
 
     const signOut = async (): Promise<void> => {
       await firebase.auth().signOut();
-      router.replace("/login");
+      router.replace(AppRoutes.login);
     };
-    const createFile = () => router.push("/image");
+    const createFile = () => router.push(AppRoutes.image);
 
     return {
       signOut,

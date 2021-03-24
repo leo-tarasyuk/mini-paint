@@ -2,18 +2,25 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import firebase from "firebase/app";
 
+export const AppRoutes = {
+  home: "/",
+  login: "/login",
+  register: "/register",
+  image: "/image"
+}
+
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
     {
-      path: "/",
+      path: AppRoutes.home,
       component: Home,
       meta: {
         requiresAuth: true
       }
     },
     {
-      path: "/login",
+      path: AppRoutes.login,
       component: () =>
         import(/* webpackChunkName: "login" */ "../views/Login.vue"),
       meta: {
@@ -21,7 +28,7 @@ const router = createRouter({
       }
     },
     {
-      path: "/register",
+      path: AppRoutes.register,
       component: () =>
         import(/* webpackChunkName: "register" */ "../views/Register.vue"),
       meta: {
@@ -29,7 +36,7 @@ const router = createRouter({
       }
     },
     {
-      path: "/image",
+      path: AppRoutes.image,
       component: () =>
         import(/* webpackChunkName: "image" */ "../views/Image.vue"),
       meta: {
