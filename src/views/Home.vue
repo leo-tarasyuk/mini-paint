@@ -18,22 +18,19 @@ import { defineComponent, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "../store";
 import { AppRoutes } from "../router";
-import firebase from "firebase/app";
-import "firebase/auth";
 
 export default defineComponent({
   setup() {
     const { getters, dispatch } = useStore();
     const router = useRouter();
-    const pictures = computed(() => getters["user/getPictures"]);
+    const pictures = computed(() => getters["pictures/getPictures"]);
 
     onMounted((): void => {
-      dispatch("user/showPictures", []);
+      dispatch("pictures/showPictures", []);
     });
 
     const signOut = async (): Promise<void> => {
-      await firebase.auth().signOut();
-      localStorage.removeItem("email");
+      await dispatch("user/signOutUser");
       router.replace(AppRoutes.login);
     };
 

@@ -4,7 +4,6 @@ import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
 import { User } from "../../types";
 import { State } from "./state";
-import { Pictures } from "../../types";
 import { FirebaseConfig } from "../../main";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -19,35 +18,35 @@ type AugmentedActionContext = {
 } & Omit<ActionContext<State, State>, "commit">;
 
 interface Actions {
+  [ActionTypes.initFirebase](
+    { state }: AugmentedActionContext,
+    payload: FirebaseConfig
+  ): Promise<firebase.firestore.Firestore>;
   [ActionTypes.registerUser](
-    { commit }: AugmentedActionContext,
+    { commit, state }: AugmentedActionContext,
     payload: User
   ): Promise<string | null>;
   [ActionTypes.loginUser](
-    { commit }: AugmentedActionContext,
+    { commit, state }: AugmentedActionContext,
     payload: User
   ): Promise<string | null>;
-  [ActionTypes.createPicture](
-    { commit, state }: AugmentedActionContext,
-    payload: Pictures
-  ): void;
-  [ActionTypes.showPictures](
-    { commit, state }: AugmentedActionContext,
-    payload: Array<Pictures>
-  ): void;
-  [ActionTypes.initFirebase](
-    context: AugmentedActionContext,
-    payload: FirebaseConfig
-  ): Promise<firebase.firestore.Firestore>;
+  [ActionTypes.signOutUser](): Promise<void>;
 }
 
 export const actions: ActionTree<State, State> & Actions = {
-  async [ActionTypes.registerUser]({ commit }, payload: User) {
+  async [ActionTypes.initFirebase](context, payload: FirebaseConfig) {
+    const firestore = firebase.initializeApp(payload).firestore();
+
+    return firestore;
+  },
+
+  async [ActionTypes.registerUser]({ commit, state }, payload: User) {
     const user = await firebase
       .auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(data => {
         commit(MutationTypes.registerUser, data.user?.uid);
+        localStorage.setItem("user", state.user);
         return null;
       })
       .catch((e: Error) => {
@@ -57,12 +56,13 @@ export const actions: ActionTree<State, State> & Actions = {
     return user;
   },
 
-  async [ActionTypes.loginUser]({ commit }, payload: User) {
+  async [ActionTypes.loginUser]({ commit, state }, payload: User) {
     const user = await firebase
       .auth()
       .signInWithEmailAndPassword(payload.email, payload.password)
       .then(data => {
         commit(MutationTypes.loginUser, data.user?.uid);
+        localStorage.setItem("user", state.user);
         return null;
       })
       .catch((e: Error) => {
@@ -72,35 +72,8 @@ export const actions: ActionTree<State, State> & Actions = {
     return user;
   },
 
-  async [ActionTypes.createPicture]({ state }, payload: Pictures) {
-    payload.user = state.user;
-    await firebase
-      .database()
-      .ref("pictures")
-      .push(payload);
-  },
-
-  async [ActionTypes.showPictures]({ commit, state }, payload) {
-    state.pictures = payload;
-    const picture = await firebase
-      .database()
-      .ref("pictures")
-      .once("value");
-    const allPictures = picture.val();
-
-    if (allPictures !== null) {
-      Object.keys(allPictures).forEach((key: string): void => {
-        if (allPictures[key].user === state.user) {
-          state.pictures.push({ ...allPictures[key] });
-        }
-      });
-    }
-    commit(MutationTypes.showPictures, state.pictures);
-  },
-
-  async [ActionTypes.initFirebase](context, payload: FirebaseConfig) {
-    const firestore = await firebase.initializeApp(payload).firestore();
-
-    return firestore;
+  async [ActionTypes.signOutUser]() {
+    await firebase.auth().signOut();
+    localStorage.setItem("user", "");
   }
 };

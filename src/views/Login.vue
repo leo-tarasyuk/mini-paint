@@ -31,7 +31,6 @@ export default defineComponent({
         error.value = mistake;
       } else {
         error.value = "";
-        localStorage.setItem("email", email);
         router.push(AppRoutes.home);
       }
     };

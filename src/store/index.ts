@@ -1,9 +1,11 @@
 import { createStore } from "vuex";
 import { user } from "./user";
+import { pictures } from "./pictures";
 
 export const store = createStore({
   modules: {
-    user
+    user,
+    pictures
   }
 });
 

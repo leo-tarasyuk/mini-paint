@@ -41,7 +41,7 @@ export default defineComponent({
 
     const downloadImage = (picture: Pictures): void => {
       if (name.value) {
-        dispatch("user/createPicture", picture);
+        dispatch("pictures/createPicture", picture);
         router.push(AppRoutes.home);
       }
     };
