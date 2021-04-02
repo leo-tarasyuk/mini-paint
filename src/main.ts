@@ -2,10 +2,8 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import { store } from "./store";
-import firebase from "firebase/app";
-import "firebase/firestore";
 
-interface FirebaseConfig {
+export interface FirebaseConfig {
   readonly apiKey: string;
   readonly authDomain: string;
   readonly projectId: string;
@@ -25,9 +23,11 @@ const firebaseConfig: FirebaseConfig = {
   appId: process.env.VUE_APP_ID
 };
 
+const firestore = store.dispatch("user/initFirebase", firebaseConfig);
+
 createApp(App)
   .use(store)
   .use(router)
   .mount("#app");
 
-export default firebase.initializeApp(firebaseConfig).firestore();
+export default firestore;

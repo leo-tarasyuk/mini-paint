@@ -23,9 +23,9 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
-import { ActionTypes } from "../store/action-types";
-import { Picture } from "../types";
+import { Pictures } from "../types";
 import { AppRoutes } from "../router";
+
 export default defineComponent({
   props: {
     img: {
@@ -39,9 +39,9 @@ export default defineComponent({
     const router = useRouter();
     const name = ref("");
 
-    const downloadImage = (picture: Picture): void => {
+    const downloadImage = (picture: Pictures): void => {
       if (name.value) {
-        dispatch(ActionTypes.createPicture, picture);
+        dispatch("user/createPicture", picture);
         router.push(AppRoutes.home);
       }
     };
@@ -77,12 +77,14 @@ export default defineComponent({
   top: 0;
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.4);
+
   .modal-head {
     height: 30px;
     display: flex;
     align-items: center;
     position: relative;
     padding-bottom: 10px;
+
     .close {
       position: absolute;
       right: 10px;
@@ -109,16 +111,19 @@ export default defineComponent({
       }
     }
   }
+
   .component {
     min-width: 300px;
     height: 100px;
     display: flex;
     flex-direction: column;
+
     .task-name {
       margin: 0;
       font-size: 20px;
       padding: 0px 0px 20px 10px;
       color: #fff;
+
       .name {
         width: 70%;
         background-color: #fff;
@@ -127,6 +132,7 @@ export default defineComponent({
         outline: none;
       }
     }
+
     .buttons {
       .save {
         width: 100px;

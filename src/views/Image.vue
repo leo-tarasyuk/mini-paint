@@ -56,6 +56,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { AppRoutes } from "../router";
 import Modal from "../components/Modal.vue";
+
 export default defineComponent({
   components: {
     Modal
@@ -84,38 +85,48 @@ export default defineComponent({
     const img = ref("");
 
     const backHome = () => router.push(AppRoutes.home);
+
     const savePicture = (): void => {
       const can = canvas.value;
+
       if (can) {
         img.value = can.toDataURL("image/png");
         stateForShowModal.value = true;
       }
     };
+
     const clearPicture = (): void => {
       const can = canvas.value;
       const con = context.value;
+
       if (can && con) {
         con.clearRect(0, 0, can.width, can.height);
       }
     };
+
     const mousedown = (e: MouseEvent): void => {
       const can = canvas.value;
+
       if (can) {
         isDrawing.value = true;
         const rect = can.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+
         startX.value = x;
         startY.value = y;
       }
     };
+
     const mousemove = (e: MouseEvent): void => {
       const can = canvas.value;
       const con = context.value;
+
       if (can && con && figure.value === "pencil") {
         const rect = can.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+
         if (isDrawing.value) {
           con.beginPath();
           con.moveTo(startX.value, startY.value);
@@ -128,15 +139,34 @@ export default defineComponent({
           startY.value = y;
         }
       }
+      // if (can && con && figure.value === "line") {
+      //   const rect = can.getBoundingClientRect();
+      //   const x = e.clientX - rect.left;
+      //   const y = e.clientY - rect.top;
+      //   if (isDrawing.value) {
+      //     con.beginPath();
+      //     // con.moveTo(startX.value, startY.value);
+      //     // con.lineTo(x, y);
+      //     // con.lineWidth = size.value;
+      //     // con.lineCap = "round";
+      //     // con.strokeStyle = color.value;
+      //     // con.stroke();
+      //     startX.value = x;
+      //     startY.value = y;
+      //   }
+      // }
     };
+
     const mouseup = (e: MouseEvent): void => {
       const can = canvas.value;
       const con = context.value;
+
       if (can && con) {
         isDrawing.value = false;
         const rect = can.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
+
         con.beginPath();
         con.moveTo(startX.value, startY.value);
         con.lineWidth = size.value;
@@ -176,6 +206,7 @@ export default defineComponent({
 
     onMounted((): void => {
       const can = canvas.value;
+
       if (can) {
         context.value = can.getContext("2d");
         can.addEventListener("mousedown", mousedown);
@@ -213,6 +244,7 @@ header {
     padding-left: 20px;
     color: #fff;
   }
+
   button {
     margin: 10px 20px;
     padding: 10px;
@@ -229,6 +261,7 @@ header {
     }
   }
 }
+
 main {
   .image-size {
     width: 100%;
@@ -241,6 +274,7 @@ main {
       margin-top: 0;
       flex-direction: column;
     }
+
     .figure {
       height: 100%;
       border: 2px solid #000;
@@ -253,6 +287,7 @@ main {
         margin-left: 0;
         flex-direction: row;
       }
+
       button {
         padding: 5px;
         margin: 5px;
@@ -267,6 +302,7 @@ main {
         }
       }
     }
+
     canvas {
       background-color: #fff;
       @media (max-width: 762px) {
@@ -274,6 +310,7 @@ main {
         height: 300px;
       }
     }
+
     .options {
       height: 100%;
       border: 2px solid #000;
@@ -288,6 +325,7 @@ main {
         margin-right: 0;
         flex-direction: row;
       }
+
       .options-for-figure {
         display: flex;
         flex-direction: column;
@@ -297,6 +335,7 @@ main {
           flex-direction: row;
         }
       }
+
       button {
         padding: 5px;
         margin: 5px 10px;
@@ -310,13 +349,16 @@ main {
           opacity: 0.8;
         }
       }
+
       .btn-color {
         width: 20px;
         height: 20px;
       }
+
       .save {
         background-color: green;
       }
+
       .clear {
         background-color: blue;
       }

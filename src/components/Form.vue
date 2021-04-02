@@ -10,7 +10,7 @@
         <label v-if="!password" for="password">Password</label>
         <input id="password" v-model="password" type="password" />
       </div>
-      <div v-if="getError" class="error">{{ getError }}</div>
+      <div v-if="error" class="error">{{ error }}</div>
       <div class="form-group">
         <button class="submit" type="submit">{{ name }}</button>
       </div>
@@ -23,20 +23,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
-import { useStore } from "../store";
+import { defineComponent, ref } from "vue";
+
 export default defineComponent({
   setup() {
-    const { getters } = useStore();
     const email = ref("");
     const password = ref("");
 
-    const getError = computed(() => getters.getError);
-
     return {
       email,
-      password,
-      getError
+      password
     };
   },
   props: {
@@ -55,6 +51,10 @@ export default defineComponent({
     auth: {
       type: Function,
       required: true
+    },
+    error: {
+      type: String,
+      required: true
     }
   }
 });
@@ -65,11 +65,13 @@ export default defineComponent({
   margin: 0 auto;
   width: 320px;
   padding-top: 200px;
+
   .form {
     color: #bebebe;
     background: #181c1d;
     margin: 0 auto;
     border-radius: 2px;
+
     .logo-page {
       padding: 10px;
       background: #181c1d;
@@ -79,9 +81,11 @@ export default defineComponent({
       color: #bebebe;
       font-weight: 700;
     }
+
     .form-group {
       position: relative;
       margin: 20px 20px;
+
       label {
         position: absolute;
         top: 8px;
@@ -92,6 +96,7 @@ export default defineComponent({
         font-weight: 400;
         background-color: rgba(255, 255, 255, 0);
       }
+
       input {
         display: block;
         box-sizing: border-box;
@@ -103,6 +108,7 @@ export default defineComponent({
         padding: 8px;
         border-radius: 2px;
       }
+
       button {
         width: 100%;
         background: rgba(255, 106, 0, 1);
@@ -120,6 +126,7 @@ export default defineComponent({
         }
       }
     }
+
     .error {
       text-align: center;
       background: #181c1d;
@@ -127,12 +134,14 @@ export default defineComponent({
       font-size: 16pх;
       margin: 0px 10px;
     }
+
     .change-page {
       display: flex;
       justify-content: center;
       align-items: center;
       padding-bottom: 20px;
       background: #181c1d;
+
       a {
         padding-left: 5px;
         background: #181c1d;

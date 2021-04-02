@@ -7,7 +7,7 @@ export const AppRoutes = {
   login: "/login",
   register: "/register",
   image: "/image"
-}
+};
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -48,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!firebase.auth().currentUser) {
+    if (!firebase.auth().currentUser && !localStorage.getItem("email")) {
       next({
         path: "/login",
         query: {
@@ -59,7 +59,8 @@ router.beforeEach((to, from, next) => {
       next();
     }
   } else if (to.matched.some(record => record.meta.requiresGuest)) {
-    if (firebase.auth().currentUser) {
+    if (firebase.auth().currentUser && localStorage.getItem("email")) {
+      console.log(firebase.auth().currentUser);
       next({
         path: "/",
         query: {

@@ -1,12 +1,15 @@
-import { ActionContext, ActionTree, DispatchOptions } from "vuex";
+import { ActionContext, ActionTree } from "vuex";
 import { Mutations } from "./mutations";
 import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
-import { Picture, Pictures, User } from "../types";
+import { User } from "../../types";
 import { State } from "./state";
+import { Pictures } from "../../types";
+import { FirebaseConfig } from "../../main";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
+import "firebase/firestore";
 
 type AugmentedActionContext = {
   commit<K extends keyof Mutations>(
@@ -14,14 +17,6 @@ type AugmentedActionContext = {
     payload: Parameters<Mutations[K]>[1]
   ): ReturnType<Mutations[K]>;
 } & Omit<ActionContext<State, State>, "commit">;
-
-export type ActionsType = {
-  dispatch<K extends keyof Actions>(
-    key: K,
-    payload: Parameters<Actions[K]>[1],
-    options?: DispatchOptions
-  ): ReturnType<Actions[K]>;
-};
 
 interface Actions {
   [ActionTypes.registerUser](
@@ -32,18 +27,18 @@ interface Actions {
     { commit }: AugmentedActionContext,
     payload: User
   ): Promise<string | null>;
-  [ActionTypes.setError](
-    { commit, state }: AugmentedActionContext,
-    payload: string
-  ): void;
   [ActionTypes.createPicture](
     { commit, state }: AugmentedActionContext,
-    payload: Picture
+    payload: Pictures
   ): void;
   [ActionTypes.showPictures](
     { commit, state }: AugmentedActionContext,
     payload: Array<Pictures>
   ): void;
+  [ActionTypes.initFirebase](
+    context: AugmentedActionContext,
+    payload: FirebaseConfig
+  ): Promise<firebase.firestore.Firestore>;
 }
 
 export const actions: ActionTree<State, State> & Actions = {
@@ -61,6 +56,7 @@ export const actions: ActionTree<State, State> & Actions = {
 
     return user;
   },
+
   async [ActionTypes.loginUser]({ commit }, payload: User) {
     const user = await firebase
       .auth()
@@ -75,9 +71,7 @@ export const actions: ActionTree<State, State> & Actions = {
 
     return user;
   },
-  [ActionTypes.setError]({ commit }, payload: string) {
-    commit(MutationTypes.setError, payload);
-  },
+
   async [ActionTypes.createPicture]({ state }, payload: Pictures) {
     payload.user = state.user;
     await firebase
@@ -85,23 +79,28 @@ export const actions: ActionTree<State, State> & Actions = {
       .ref("pictures")
       .push(payload);
   },
-  async [ActionTypes.showPictures]({ commit, state }) {
-    state.pictures = [];
-    const task = await firebase
+
+  async [ActionTypes.showPictures]({ commit, state }, payload) {
+    state.pictures = payload;
+    const picture = await firebase
       .database()
       .ref("pictures")
       .once("value");
-    const tasks = task.val();
-    const data: Array<Pictures> = [];
+    const allPictures = picture.val();
 
-    if (tasks !== null) {
-      Object.keys(tasks).forEach((key: string): void => {
-        if (tasks[key].user === state.user) {
-          data.push({ ...tasks[key] });
+    if (allPictures !== null) {
+      Object.keys(allPictures).forEach((key: string): void => {
+        if (allPictures[key].user === state.user) {
+          state.pictures.push({ ...allPictures[key] });
         }
       });
     }
+    commit(MutationTypes.showPictures, state.pictures);
+  },
 
-    commit(MutationTypes.showPictures, data);
+  async [ActionTypes.initFirebase](context, payload: FirebaseConfig) {
+    const firestore = await firebase.initializeApp(payload).firestore();
+
+    return firestore;
   }
 };

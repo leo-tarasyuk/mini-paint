@@ -1,14 +1,20 @@
 <template>
-  <Form :name="name" :text="text" :route="route" :auth="register" />
+  <Form
+    :name="name"
+    :text="text"
+    :route="route"
+    :auth="register"
+    :error="error"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useStore } from "../store";
 import { useRouter } from "vue-router";
-import { ActionTypes } from "../store/action-types";
 import { AppRoutes } from "../router";
 import Form from "../components/Form.vue";
+
 export default defineComponent({
   components: {
     Form
@@ -19,16 +25,19 @@ export default defineComponent({
     const name = ref("Register");
     const text = ref("Have an account?");
     const route = ref("/login");
+    const error = ref("");
 
     const register = async (email: string, password: string) => {
-      const mistake = await dispatch(ActionTypes.registerUser, {
+      const mistake: string | null = await dispatch("user/registerUser", {
         email,
         password
       });
+
       if (mistake) {
-        dispatch(ActionTypes.setError, mistake);
+        error.value = mistake;
       } else {
-        dispatch(ActionTypes.setError, "");
+        error.value = "";
+        localStorage.setItem("email", email);
         router.push(AppRoutes.home);
       }
     };
@@ -37,7 +46,8 @@ export default defineComponent({
       name,
       text,
       route,
-      register
+      register,
+      error
     };
   }
 });
