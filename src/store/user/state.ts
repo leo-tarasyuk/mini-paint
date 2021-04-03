@@ -1,7 +1,5 @@
-export type State = {
-  user: string;
-};
+import { UserState } from './types';
 
-export const state: State = {
+export const state: UserState = {
   user: ""
 };

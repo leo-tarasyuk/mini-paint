@@ -1,10 +1,14 @@
 import { ActionContext, ActionTree } from "vuex";
+
 import { Mutations } from "./mutations";
 import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
+import { UserState } from './types';
+import { RootState } from './../types';
 import { User } from "../../types";
-import { State } from "./state";
+
 import { FirebaseConfig } from "../../main";
+
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -15,7 +19,7 @@ type AugmentedActionContext = {
     key: K,
     payload: Parameters<Mutations[K]>[1]
   ): ReturnType<Mutations[K]>;
-} & Omit<ActionContext<State, State>, "commit">;
+} & Omit<ActionContext<UserState, RootState>, "commit">;
 
 interface Actions {
   [ActionTypes.initFirebase](
@@ -33,7 +37,7 @@ interface Actions {
   [ActionTypes.signOutUser](): Promise<void>;
 }
 
-export const actions: ActionTree<State, State> & Actions = {
+export const actions: ActionTree<UserState, RootState> & Actions = {
   async [ActionTypes.initFirebase](context, payload: FirebaseConfig) {
     const firestore = firebase.initializeApp(payload).firestore();
 

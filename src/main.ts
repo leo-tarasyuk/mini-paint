@@ -1,7 +1,9 @@
 import { createApp } from "vue";
-import App from "./App.vue";
+
 import router from "./router";
-import { store } from "./store";
+import { store, key } from "./store";
+
+import App from "./App.vue";
 
 export interface FirebaseConfig {
   readonly apiKey: string;
@@ -26,7 +28,7 @@ const firebaseConfig: FirebaseConfig = {
 const firestore = store.dispatch("user/initFirebase", firebaseConfig);
 
 createApp(App)
-  .use(store)
+  .use(store, key)
   .use(router)
   .mount("#app");
 
