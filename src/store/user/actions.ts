@@ -3,11 +3,9 @@ import { ActionContext, ActionTree } from "vuex";
 import { Mutations } from "./mutations";
 import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
-import { UserState } from './types';
-import { RootState } from './../types';
-import { User } from "../../types";
-
-import { FirebaseConfig } from "../../main";
+import { UserState } from "./types";
+import { RootState } from "./../types";
+import { User, FirebaseConfig } from "../../types";
 
 import firebase from "firebase/app";
 import "firebase/auth";

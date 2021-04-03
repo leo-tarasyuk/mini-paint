@@ -1,8 +1,4 @@
-import { Pictures } from "../../types";
-
-export type PicturesState = {
-  pictures: Array<Pictures>;
-};
+import { PicturesState } from "./types";
 
 export const state: PicturesState = {
   pictures: []
