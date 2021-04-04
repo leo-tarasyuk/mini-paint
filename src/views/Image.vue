@@ -83,6 +83,7 @@ export default defineComponent({
     const figure = ref("pencil");
     const stateForShowModal = ref(false);
     const img = ref("");
+    const image = ref();
 
     const backHome = () => router.push(AppRoutes.home);
 
@@ -106,76 +107,58 @@ export default defineComponent({
 
     const mousedown = (e: MouseEvent): void => {
       const can = canvas.value;
-
-      if (can) {
-        isDrawing.value = true;
-        const rect = can.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        startX.value = x;
-        startY.value = y;
+      const con = context.value;
+      isDrawing.value = true;
+      if (can && con) {
+        startX.value = e.offsetX;
+        startY.value = e.offsetY;
       }
     };
 
     const mousemove = (e: MouseEvent): void => {
       const can = canvas.value;
       const con = context.value;
+      const x = e.offsetX - e.movementX;
+      const y = e.offsetY - e.movementY;
 
-      if (can && con && figure.value === "pencil") {
-        const rect = can.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        if (isDrawing.value) {
-          con.beginPath();
-          con.moveTo(startX.value, startY.value);
-          con.lineWidth = size.value;
-          con.lineCap = "round";
-          con.strokeStyle = color.value;
-          con.lineTo(x, y);
-          con.stroke();
-          startX.value = x;
-          startY.value = y;
-        }
-      }
-      // if (can && con && figure.value === "line") {
-      //   const rect = can.getBoundingClientRect();
-      //   const x = e.clientX - rect.left;
-      //   const y = e.clientY - rect.top;
-      //   if (isDrawing.value) {
-      //     con.beginPath();
-      //     // con.moveTo(startX.value, startY.value);
-      //     // con.lineTo(x, y);
-      //     // con.lineWidth = size.value;
-      //     // con.lineCap = "round";
-      //     // con.strokeStyle = color.value;
-      //     // con.stroke();
-      //     startX.value = x;
-      //     startY.value = y;
-      //   }
-      // }
-    };
-
-    const mouseup = (e: MouseEvent): void => {
-      const can = canvas.value;
-      const con = context.value;
-
-      if (can && con) {
-        isDrawing.value = false;
-        const rect = can.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        con.beginPath();
-        con.moveTo(startX.value, startY.value);
+      if (can && con && isDrawing.value) {
         con.lineWidth = size.value;
         con.lineCap = "round";
         con.strokeStyle = color.value;
-        if (figure.value === "line") {
+        if (figure.value === "pencil") {
+          con.beginPath();
+          con.moveTo(e.offsetX, e.offsetY);
           con.lineTo(x, y);
+          con.stroke();
+          con.closePath();
+        }
+        if (figure.value === "line") {
+          con.beginPath();
+          con.moveTo(startX.value, startY.value);
+          con.clearRect(0, 0, can.width, can.height);
+          con.lineTo(e.offsetX, e.offsetY);
+          con.stroke();
+          con.closePath();
+        }
+        if (figure.value === "rectangle") {
+          con.beginPath();
+          con.moveTo(startX.value, startY.value);
+          con.clearRect(0, 0, can.width, can.height);
+          con.rect(
+            startX.value,
+            startY.value,
+            e.offsetX - startX.value,
+            e.offsetY - startY.value
+          );
+          con.fillStyle = color.value;
+          con.fill();
+          con.stroke();
+          con.closePath();
         }
         if (figure.value === "circle") {
+          con.beginPath();
+          con.moveTo(startX.value, startY.value);
+          con.clearRect(0, 0, can.width, can.height);
           con.arc(
             startX.value,
             startY.value,
@@ -189,19 +172,14 @@ export default defineComponent({
           );
           con.fillStyle = color.value;
           con.fill();
+          con.stroke();
+          con.closePath();
         }
-        if (figure.value === "rectangle") {
-          con.rect(
-            startX.value,
-            startY.value,
-            x - startX.value,
-            y - startY.value
-          );
-          con.fillStyle = color.value;
-          con.fill();
-        }
-        con.stroke();
       }
+    };
+
+    const mouseup = (): void => {
+      isDrawing.value = false;
     };
 
     onMounted((): void => {
@@ -232,7 +210,8 @@ export default defineComponent({
       isColorWindow,
       figure,
       stateForShowModal,
-      img
+      img,
+      image
     };
   }
 });
@@ -269,7 +248,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 10px;
     @media (max-width: 762px) {
       margin-top: 0;
       flex-direction: column;
@@ -282,7 +261,7 @@ main {
       flex-direction: column;
       margin-left: 10px;
       @media (max-width: 762px) {
-        width: 300px;
+        width: 325px;
         height: 50px;
         margin-left: 0;
         flex-direction: row;
@@ -306,8 +285,8 @@ main {
     canvas {
       background-color: #fff;
       @media (max-width: 762px) {
-        width: 300px;
-        height: 300px;
+        width: 325px;
+        height: 250px;
       }
     }
 
@@ -319,7 +298,7 @@ main {
       justify-content: space-between;
       margin-right: 10px;
       @media (max-width: 762px) {
-        width: 300px;
+        width: 325px;
         height: 50px;
         margin-left: 0;
         margin-right: 0;

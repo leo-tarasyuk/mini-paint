@@ -40,7 +40,7 @@ export const actions: ActionTree<PicturesState, State> & Actions = {
   async [ActionTypes.showPictures]({ commit, state }, payload) {
     state.pictures = payload;
     const user = localStorage.getItem("user");
-    
+
     firebase
       .database()
       .ref("pictures")
