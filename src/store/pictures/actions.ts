@@ -40,19 +40,16 @@ export const actions: ActionTree<PicturesState, State> & Actions = {
   async [ActionTypes.showPictures]({ commit, state }, payload) {
     state.pictures = payload;
     const user = localStorage.getItem("user");
-    const picture = await firebase
+    
+    firebase
       .database()
       .ref("pictures")
-      .once("value");
-    const allPictures = await picture.val();
-
-    if (allPictures !== null) {
-      Object.keys(allPictures).forEach((key: string): void => {
-        if (allPictures[key].user === user) {
-          state.pictures.push({ ...allPictures[key] });
+      .orderByChild("user")
+      .on("child_added", function(snapshot) {
+        if (snapshot.val().user === user) {
+          state.pictures.push(snapshot.val());
         }
       });
-    }
 
     commit(MutationTypes.showPictures, state.pictures);
   }
