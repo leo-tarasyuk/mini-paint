@@ -21,10 +21,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useStore } from "../store";
 import { useRouter } from "vue-router";
-import { Pictures } from "../types";
+
+import { useStore } from "../store";
 import { AppRoutes } from "../router";
+import { Pictures } from "../types";
 
 export default defineComponent({
   props: {
@@ -33,7 +34,6 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ["stateChanged"],
   setup(props, { emit }) {
     const { dispatch } = useStore();
     const router = useRouter();
