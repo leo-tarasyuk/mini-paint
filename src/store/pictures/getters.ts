@@ -1,12 +1,13 @@
 import { GetterTree } from "vuex";
-import { State } from "../user/state";
-import { PicturesState } from "./state";
+
+import { PicturesState } from "./types";
+import { RootState } from "./../types";
 import { Pictures } from "../../types";
 
 type Getters = {
   getPictures(state: PicturesState): Array<Pictures>;
 };
 
-export const getters: GetterTree<PicturesState, State> & Getters = {
+export const getters: GetterTree<PicturesState, RootState> & Getters = {
   getPictures: state => state.pictures
 };

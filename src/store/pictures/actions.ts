@@ -1,10 +1,12 @@
 import { ActionContext, ActionTree } from "vuex";
+
 import { Mutations } from "./mutations";
 import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
-import { State } from "../user/state";
-import { PicturesState } from "./state";
+import { PicturesState } from "./types";
+import { RootState } from "./../types";
 import { Pictures } from "../../types";
+
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -15,7 +17,7 @@ type AugmentedActionContext = {
     key: K,
     payload: Parameters<Mutations[K]>[1]
   ): ReturnType<Mutations[K]>;
-} & Omit<ActionContext<PicturesState, State>, "commit">;
+} & Omit<ActionContext<PicturesState, RootState>, "commit">;
 
 interface Actions {
   [ActionTypes.createPicture](
@@ -28,7 +30,7 @@ interface Actions {
   ): void;
 }
 
-export const actions: ActionTree<PicturesState, State> & Actions = {
+export const actions: ActionTree<PicturesState, RootState> & Actions = {
   async [ActionTypes.createPicture]({ rootGetters }, payload: Pictures) {
     payload.user = rootGetters["user/getUser"];
     await firebase
