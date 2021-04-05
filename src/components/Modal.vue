@@ -34,7 +34,6 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ["stateChanged"],
   setup(props, { emit }) {
     const { dispatch } = useStore();
     const router = useRouter();
