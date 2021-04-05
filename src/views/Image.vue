@@ -54,7 +54,9 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
 import { AppRoutes } from "../router";
+
 import Modal from "../components/Modal.vue";
 
 export default defineComponent({

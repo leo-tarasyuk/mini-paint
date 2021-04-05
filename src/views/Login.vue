@@ -4,9 +4,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useStore } from "../store";
 import { useRouter } from "vue-router";
+
+import { useStore } from "../store";
 import { AppRoutes } from "../router";
+
 import Form from "../components/Form.vue";
 
 export default defineComponent({
