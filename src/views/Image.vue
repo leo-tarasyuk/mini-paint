@@ -114,6 +114,7 @@ export default defineComponent({
       if (can && con) {
         startX.value = e.offsetX;
         startY.value = e.offsetY;
+        image.value = con.getImageData(0, 0, can.width, can.height);
       }
     };
 
@@ -139,6 +140,7 @@ export default defineComponent({
           con.moveTo(startX.value, startY.value);
           con.clearRect(0, 0, can.width, can.height);
           con.lineTo(e.offsetX, e.offsetY);
+          con.putImageData(image.value, 0, 0);
           con.stroke();
           con.closePath();
         }
@@ -153,6 +155,7 @@ export default defineComponent({
             e.offsetY - startY.value
           );
           con.fillStyle = color.value;
+          con.putImageData(image.value, 0, 0);
           con.fill();
           con.stroke();
           con.closePath();
@@ -173,6 +176,7 @@ export default defineComponent({
             false
           );
           con.fillStyle = color.value;
+          con.putImageData(image.value, 0, 0);
           con.fill();
           con.stroke();
           con.closePath();
