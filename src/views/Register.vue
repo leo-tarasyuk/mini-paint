@@ -39,7 +39,7 @@ export default defineComponent({
         error.value = mistake;
       } else {
         error.value = "";
-        router.push(AppRoutes.home);
+        router.push(AppRoutes.tour);
       }
     };
 

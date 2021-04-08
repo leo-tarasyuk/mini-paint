@@ -7,18 +7,17 @@
     <main>
       <div class="image-size">
         <div class="figure">
-          <button class="pencil" @click="figure = 'pencil'">∼</button>
-          <button class="line" @click="figure = 'line'">/</button>
-          <button class="circle" @click="figure = 'circle'">◯</button>
-          <button class="rectangle" @click="figure = 'rectangle'">▭</button>
+          <button v-for="fig in figures" :key="fig" @click="figure = fig.name">
+            {{ fig.picture }}
+          </button>
         </div>
         <canvas ref="canvas" width="650" height="500"></canvas>
         <div class="options">
           <div class="options-for-figure">
-            <button class="color" @click="isColorWindow = !isColorWindow">
+            <button @click="isColorWindow = !isColorWindow">
               Color
             </button>
-            <button class="size" @click="isSizeWindow = !isSizeWindow">
+            <button @click="isSizeWindow = !isSizeWindow">
               Size
             </button>
           </div>
@@ -82,10 +81,16 @@ export default defineComponent({
     const allSize = ref([1, 5, 10, 20]);
     const isSizeWindow = ref(false);
     const isColorWindow = ref(false);
+    const figures = ref([
+      { name: "pencil", picture: "∼" },
+      { name: "line", picture: "/" },
+      { name: "rectangle", picture: "▭" },
+      { name: "circle", picture: "◯" }
+    ]);
     const figure = ref("pencil");
     const stateForShowModal = ref(false);
     const img = ref("");
-    const image = ref();
+    const image = ref<ImageData | null>(null);
 
     const backHome = () => router.push(AppRoutes.home);
 
@@ -124,7 +129,7 @@ export default defineComponent({
       const x = e.offsetX - e.movementX;
       const y = e.offsetY - e.movementY;
 
-      if (can && con && isDrawing.value) {
+      if (can && con && isDrawing.value && image.value) {
         con.lineWidth = size.value;
         con.lineCap = "round";
         con.strokeStyle = color.value;
@@ -215,6 +220,7 @@ export default defineComponent({
       isSizeWindow,
       isColorWindow,
       figure,
+      figures,
       stateForShowModal,
       img,
       image
@@ -302,6 +308,7 @@ main {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
       margin-right: 10px;
       @media (max-width: 762px) {
         width: 325px;
@@ -315,7 +322,6 @@ main {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
         @media (max-width: 762px) {
           flex-direction: row;
         }

@@ -6,7 +6,8 @@ export const AppRoutes = {
   home: "/",
   login: "/login",
   register: "/register",
-  image: "/image"
+  image: "/image",
+  tour: "/tour"
 };
 
 const router = createRouter({
@@ -39,6 +40,14 @@ const router = createRouter({
       path: AppRoutes.image,
       component: () =>
         import(/* webpackChunkName: "image" */ "../views/Image.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: AppRoutes.tour,
+      component: () =>
+        import(/* webpackChunkName: "tour" */ "../views/Tour.vue"),
       meta: {
         requiresAuth: true
       }

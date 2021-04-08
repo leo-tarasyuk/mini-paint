@@ -26,7 +26,7 @@ export default defineComponent({
     const router = useRouter();
     const pictures = computed(() => getters["pictures/getPictures"]);
 
-    onMounted((): void => {
+    onMounted(async () => {
       dispatch("pictures/showPictures", []);
     });
 

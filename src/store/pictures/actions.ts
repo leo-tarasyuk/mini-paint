@@ -21,7 +21,7 @@ type AugmentedActionContext = {
 
 interface Actions {
   [ActionTypes.createPicture](
-    { rootGetters }: AugmentedActionContext,
+    context: AugmentedActionContext,
     payload: Pictures
   ): void;
   [ActionTypes.showPictures](
@@ -31,11 +31,12 @@ interface Actions {
 }
 
 export const actions: ActionTree<PicturesState, RootState> & Actions = {
-  async [ActionTypes.createPicture]({ rootGetters }, payload: Pictures) {
-    payload.user = rootGetters["user/getUser"];
+  async [ActionTypes.createPicture](context, payload: Pictures) {
+    const user = localStorage.getItem("user");
+
     await firebase
       .database()
-      .ref("pictures")
+      .ref(`users/${user}/pictures`)
       .push(payload);
   },
 
@@ -45,12 +46,9 @@ export const actions: ActionTree<PicturesState, RootState> & Actions = {
 
     firebase
       .database()
-      .ref("pictures")
-      .orderByChild("user")
+      .ref(`users/${user}/pictures`)
       .on("child_added", function(snapshot) {
-        if (snapshot.val().user === user) {
-          state.pictures.push(snapshot.val());
-        }
+        state.pictures.push(snapshot.val());
       });
 
     commit(MutationTypes.showPictures, state.pictures);
