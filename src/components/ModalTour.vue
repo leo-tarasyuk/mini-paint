@@ -54,6 +54,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "../store";
 
 import { AppRoutes } from "../router";
 
@@ -66,9 +67,11 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const router = useRouter();
+    const { getters } = useStore();
     const figures = ref(["∼", "/", "▭", "◯"]);
 
     const goHome = (): void => {
+      localStorage.setItem("user", getters["user/getUser"]);
       router.push(AppRoutes.home);
     };
 

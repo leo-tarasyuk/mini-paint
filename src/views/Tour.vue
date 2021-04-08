@@ -17,9 +17,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useRouter } from "vue-router";
-
-import { AppRoutes } from "../router";
 
 import Home from "./Home.vue";
 import Image from "./Image.vue";
@@ -32,7 +29,6 @@ export default defineComponent({
     ModalTour
   },
   setup() {
-    const router = useRouter();
     const count = ref(0);
     const tour = ref([
       {
@@ -234,14 +230,9 @@ export default defineComponent({
       count.value += num;
     };
 
-    const goHome = () => {
-      router.push(AppRoutes.home);
-    };
-
     return {
       count,
       showButtons,
-      goHome,
       tour
     };
   }

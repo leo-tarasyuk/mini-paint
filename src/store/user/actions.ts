@@ -48,7 +48,6 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(data => {
         commit(MutationTypes.registerUser, data.user?.uid);
-        localStorage.setItem("user", state.user);
         return null;
       })
       .catch((e: Error) => {
