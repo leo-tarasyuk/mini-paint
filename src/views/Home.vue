@@ -1,9 +1,17 @@
 <template>
   <header>
-    <button class="create-file" @click="createFile()">Create file</button>
+    <div></div>
     <button class="sign-out" @click="signOut()">Sign out</button>
   </header>
   <main>
+    <nav>
+      <div class="button">
+        <button class="nav-buttons" @click="createFile()">Create file</button>
+      </div>
+      <div v-if="pictures.length > 4" class="button">
+        <button class="nav-buttons" @click="slider()">Slider</button>
+      </div>
+    </nav>
     <ul>
       <li v-for="item in pictures" :key="item">
         <img :src="item.img" alt="" />
@@ -26,9 +34,11 @@ export default defineComponent({
     const router = useRouter();
     const pictures = computed(() => getters["pictures/getPictures"]);
 
-    onMounted(async () => {
+    onMounted(() => {
       dispatch("pictures/showPictures", []);
     });
+
+    const slider = () => router.push(AppRoutes.slider);
 
     const signOut = async (): Promise<void> => {
       await dispatch("user/signOutUser");
@@ -40,37 +50,19 @@ export default defineComponent({
     return {
       signOut,
       createFile,
-      pictures
+      pictures,
+      slider
     };
   }
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #000;
-
-  button {
-    margin: 10px 20px;
-    padding: 10px 20px;
-    border-radius: 2px;
-    font-size: 13px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 700;
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-
-  .create-file {
-    background-color: #0180da;
-  }
 
   .sign-out {
     background-color: rgba(255, 106, 0, 1);
@@ -78,13 +70,21 @@ header {
 }
 
 main {
-  padding-top: 20px;
-
+  nav {
+    display: flex;
+    border-bottom: 1px solid #000;
+    .button {
+      .nav-buttons {
+        background-color: #0180da;
+      }
+    }
+  }
   ul {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: center;
+    padding-top: 10px;
 
     li {
       list-style: none;
@@ -103,6 +103,21 @@ main {
         background-color: #fff;
       }
     }
+  }
+}
+
+button {
+  margin: 10px 20px;
+  padding: 10px 20px;
+  border-radius: 2px;
+  font-size: 13px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 700;
+  &:hover {
+    opacity: 0.8;
   }
 }
 </style>

@@ -6,6 +6,7 @@ import { ActionTypes } from "./action-types";
 import { PicturesState } from "./types";
 import { RootState } from "./../types";
 import { Pictures } from "../../types";
+import shuffle from "./helpers/helpers";
 
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -28,6 +29,10 @@ interface Actions {
     { commit, state }: AugmentedActionContext,
     payload: Array<Pictures>
   ): void;
+  [ActionTypes.showRandomPictures](
+    { commit, dispatch }: AugmentedActionContext,
+    payload: Array<Pictures>
+  ): void;
 }
 
 export const actions: ActionTree<PicturesState, RootState> & Actions = {
@@ -40,8 +45,8 @@ export const actions: ActionTree<PicturesState, RootState> & Actions = {
       .push(payload);
   },
 
-  async [ActionTypes.showPictures]({ commit, state }, payload) {
-    state.pictures = payload;
+  [ActionTypes.showPictures]({ commit, state }, payload) {
+    commit(MutationTypes.showPictures, payload);
     const user = localStorage.getItem("user");
 
     firebase
@@ -52,5 +57,13 @@ export const actions: ActionTree<PicturesState, RootState> & Actions = {
       });
 
     commit(MutationTypes.showPictures, state.pictures);
+
+    return state.pictures;
+  },
+
+  async [ActionTypes.showRandomPictures]({ commit, dispatch }, payload) {
+    const pictures = await dispatch(ActionTypes.showPictures, payload);
+
+    commit(MutationTypes.showPictures, shuffle(pictures));
   }
 };

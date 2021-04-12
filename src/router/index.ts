@@ -7,7 +7,8 @@ export const AppRoutes = {
   login: "/login",
   register: "/register",
   image: "/image",
-  tour: "/tour"
+  tour: "/tour",
+  slider: "/slider"
 };
 
 const router = createRouter({
@@ -48,6 +49,14 @@ const router = createRouter({
       path: AppRoutes.tour,
       component: () =>
         import(/* webpackChunkName: "tour" */ "../views/Tour.vue"),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: AppRoutes.slider,
+      component: () =>
+        import(/* webpackChunkName: "slider" */ "../views/Slider.vue"),
       meta: {
         requiresAuth: true
       }
