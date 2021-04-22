@@ -5,6 +5,7 @@ import { store, key, ActionType } from "./store";
 
 import App from "./App.vue";
 
+// TODO: review needs for returning firestore
 const firebaseFirestore = store.dispatch(ActionType.initApp);
 
 createApp(App)

@@ -11,7 +11,7 @@ export interface FirebaseConfig {
 export type User = {
     email: string;
     password: string;
-}
+};
 
 export type Pictures = {
     img: string;
