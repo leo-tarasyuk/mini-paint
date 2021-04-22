@@ -18,6 +18,7 @@ export const key: InjectionKey<Store<RootState>> = Symbol();
 export enum MutationType {
   appStatusChanged = "APP_STATUS_CHANGED"
 }
+
 const mutations: MutationTree<RootState> = {
   [MutationType.appStatusChanged](state: RootState, status: boolean) {
     state.isAppInitialized = status;
@@ -30,7 +31,6 @@ export enum ActionType {
 
 const actions: ActionTree<RootState, RootState> = {
   async [ActionType.initApp]({ dispatch, commit }) {
-    // init Firebase
     const firebaseConfig: FirebaseConfig = {
       apiKey: process.env.VUE_APP_API_KEY,
       authDomain: process.env.VUE_APP_AUTH_DOMAIN,
@@ -40,9 +40,11 @@ const actions: ActionTree<RootState, RootState> = {
       messagingSenderId: process.env.VUE_APP_MSI,
       appId: process.env.VUE_APP_ID
     };
-    const firestore = await dispatch(`user/${UserActionTypes.initFirebase}`, firebaseConfig);
+    const firestore = await dispatch(
+      `user/${UserActionTypes.initFirebase}`,
+      firebaseConfig
+    );
 
-    // indicate that app has been initialized
     const isAppInitialized = true;
     commit(MutationType.appStatusChanged, isAppInitialized);
 
