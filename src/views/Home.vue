@@ -1,5 +1,6 @@
 <template>
   <header>
+    <button class="sign-out" @click="settings()">Settings</button>
     <div></div>
     <button class="sign-out" @click="signOut()">Sign out</button>
   </header>
@@ -12,6 +13,7 @@
         <button class="nav-buttons" @click="slider()">Slider</button>
       </div>
     </nav>
+    <h2>Pictures</h2>
     <ul>
       <li v-for="item in pictures" :key="item">
         <img :src="item.img" alt="" />
@@ -34,8 +36,8 @@ export default defineComponent({
     const router = useRouter();
     const pictures = computed(() => getters["pictures/getPictures"]);
 
-    onMounted(() => {
-      dispatch("pictures/showPictures", []);
+    onMounted(async () => {
+      await dispatch("pictures/showPictures", []);
     });
 
     const slider = () => router.push(AppRoutes.slider);
@@ -45,10 +47,12 @@ export default defineComponent({
       router.replace(AppRoutes.login);
     };
 
+    const settings = () => router.push(AppRoutes.settings);
     const createFile = () => router.push(AppRoutes.image);
 
     return {
       signOut,
+      settings,
       createFile,
       pictures,
       slider
@@ -79,6 +83,13 @@ main {
       }
     }
   }
+
+  h2 {
+    width: 100%;
+    color: rgba(255, 106, 0, 1);
+    text-align: center;
+  }
+
   ul {
     display: flex;
     flex-wrap: wrap;

@@ -1,3 +1,4 @@
 export enum MutationTypes {
-  showPictures = "showPictures"
+  showPictures = "showPictures",
+  getUserParams = "getUserParams"
 }

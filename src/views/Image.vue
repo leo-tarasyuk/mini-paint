@@ -234,6 +234,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   h2 {
     padding-left: 20px;
     color: #fff;
