@@ -12,7 +12,7 @@
       </div>
       <div v-if="error" class="error">{{ error }}</div>
       <div class="form-group">
-        <button class="submit" type="submit">{{ name }}</button>
+        <SystemButton :name="name" />
       </div>
       <div class="change-page">
         {{ text }}
@@ -25,7 +25,12 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 
+import SystemButton from "./buttons/SystemButton.vue";
+
 export default defineComponent({
+  components: {
+    SystemButton
+  },
   setup() {
     const email = ref("");
     const password = ref("");
@@ -60,7 +65,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .login-and-register {
   margin: 0 auto;
   width: 320px;
@@ -107,23 +112,6 @@ export default defineComponent({
         font-size: 20px;
         padding: 8px;
         border-radius: 2px;
-      }
-
-      button {
-        width: 100%;
-        background: rgba(255, 106, 0, 1);
-        border-radius: 2px;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        display: block;
-        font-size: 16px;
-        line-height: 15px;
-        outline: none;
-        padding: 10px;
-        &:hover {
-          background: rgba(255, 106, 0, 0.7);
-        }
       }
     }
 

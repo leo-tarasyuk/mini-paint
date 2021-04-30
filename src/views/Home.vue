@@ -1,16 +1,40 @@
 <template>
   <header>
-    <button class="sign-out" @click="settings()">Settings</button>
+    <div>
+      <DefaultButton
+        class="header-buttons"
+        @click="settings()"
+        :name="'Settings'"
+      />
+    </div>
     <div></div>
-    <button class="sign-out" @click="signOut()">Sign out</button>
+    <div class="header-component">
+      <img v-if="avatar" :src="avatar" />
+      <img
+        v-else
+        src="https://w7.pngwing.com/pngs/407/879/png-transparent-computer-icons-user-login-others-miscellaneous-monochrome-chemistry.png"
+      />
+      <p>{{ email }}</p>
+      <div>
+        <DefaultButton
+          class="header-buttons"
+          @click="signOut()"
+          :name="'Sign out'"
+        />
+      </div>
+    </div>
   </header>
   <main>
     <nav>
       <div class="button">
-        <button class="nav-buttons" @click="createFile()">Create file</button>
+        <DefaultButton
+          class="nav-buttons"
+          @click="createFile()"
+          :name="'Create file'"
+        />
       </div>
       <div v-if="pictures.length > 4" class="button">
-        <button class="nav-buttons" @click="slider()">Slider</button>
+        <DefaultButton class="nav-buttons" @click="slider()" :name="'Slider'" />
       </div>
     </nav>
     <h2>Pictures</h2>
@@ -24,20 +48,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 import { useStore } from "../store";
 import { AppRoutes } from "../router";
 
+import DefaultButton from "../components/buttons/DefaultButton.vue";
+
 export default defineComponent({
+  components: {
+    DefaultButton
+  },
   setup() {
     const { getters, dispatch } = useStore();
     const router = useRouter();
     const pictures = computed(() => getters["pictures/getPictures"]);
+    const userProperty = computed(() => getters["pictures/getUserProperty"]);
+    const email = ref(localStorage.getItem("email"));
+    const avatar = ref<string>("");
 
     onMounted(async () => {
+      await dispatch("pictures/getUserParams");
       await dispatch("pictures/showPictures", []);
+      avatar.value = userProperty.value.image;
     });
 
     const slider = () => router.push(AppRoutes.slider);
@@ -55,6 +89,9 @@ export default defineComponent({
       settings,
       createFile,
       pictures,
+      userProperty,
+      email,
+      avatar,
       slider
     };
   }
@@ -68,7 +105,23 @@ header {
   align-items: center;
   border-bottom: 2px solid #000;
 
-  .sign-out {
+  .header-component {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 20px;
+      height: 20px;
+      background-image: cover;
+    }
+
+    p {
+      padding-left: 5px;
+      color: #fff;
+    }
+  }
+
+  .header-buttons {
     background-color: rgba(255, 106, 0, 1);
   }
 }
@@ -77,10 +130,9 @@ main {
   nav {
     display: flex;
     border-bottom: 1px solid #000;
-    .button {
-      .nav-buttons {
-        background-color: #0180da;
-      }
+
+    .nav-buttons {
+      background-color: #0180da;
     }
   }
 
@@ -114,21 +166,6 @@ main {
         background-color: #fff;
       }
     }
-  }
-}
-
-button {
-  margin: 10px 20px;
-  padding: 10px 20px;
-  border-radius: 2px;
-  font-size: 13px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 700;
-  &:hover {
-    opacity: 0.8;
   }
 }
 </style>

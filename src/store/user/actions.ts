@@ -49,6 +49,7 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
       .then(data => {
         commit(MutationTypes.registerUser, data.user?.uid);
         localStorage.setItem("user", state.user);
+        localStorage.setItem("email", payload.email);
         return null;
       })
       .catch((e: Error) => {
@@ -65,6 +66,7 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
       .then(data => {
         commit(MutationTypes.loginUser, data.user?.uid);
         localStorage.setItem("user", state.user);
+        localStorage.setItem("email", payload.email);
         return null;
       })
       .catch((e: Error) => {
@@ -77,5 +79,6 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
   async [ActionTypes.signOutUser]() {
     await firebase.auth().signOut();
     localStorage.setItem("user", "");
+    localStorage.setItem("email", "");
   }
 };

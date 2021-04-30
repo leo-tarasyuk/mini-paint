@@ -10,9 +10,11 @@
           <input v-model="name" class="name" type="text" />
         </div>
         <div class="buttons">
-          <button class="save" @click="downloadImage({ img, name })">
-            Save
-          </button>
+          <DefaultButton
+            class="save"
+            @click="downloadImage({ img, name })"
+            :name="'Save'"
+          />
         </div>
       </div>
     </div>
@@ -27,7 +29,12 @@ import { useStore } from "../store";
 import { AppRoutes } from "../router";
 import { Pictures } from "../types";
 
+import DefaultButton from "./buttons/DefaultButton.vue";
+
 export default defineComponent({
+  components: {
+    DefaultButton
+  },
   props: {
     img: {
       type: String,
@@ -133,23 +140,8 @@ export default defineComponent({
       }
     }
 
-    .buttons {
-      .save {
-        width: 100px;
-        height: 40px;
-        border-radius: 5px;
-        background: rgba(255, 106, 0, 1);
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        display: block;
-        font-size: 16px;
-        outline: none;
-        margin: 10px 0px 0px 20px;
-        &:hover {
-          background: rgba(255, 106, 0, 0.7);
-        }
-      }
+    .save {
+      background: rgba(255, 106, 0, 1);
     }
   }
 }

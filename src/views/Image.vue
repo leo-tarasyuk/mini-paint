@@ -2,42 +2,51 @@
   <div>
     <header>
       <h2>New image</h2>
-      <button @click="backHome()">←</button>
+      <DefaultButton class="back" @click="backHome()" :name="'←'" />
     </header>
     <main>
       <div class="image-size">
-        <div class="figure">
-          <button v-for="fig in figures" :key="fig" @click="figure = fig.name">
-            {{ fig.picture }}
-          </button>
+        <div class="figures">
+          <DefaultButton
+            v-for="fig in figures"
+            :key="fig"
+            @click="figure = fig.name"
+            :name="fig.picture"
+            class="figure"
+          />
         </div>
         <canvas ref="canvas" width="650" height="500"></canvas>
         <div class="options">
           <div class="options-for-figure">
-            <button @click="isColorWindow = !isColorWindow">
-              Color
-            </button>
-            <button @click="isSizeWindow = !isSizeWindow">
-              Size
-            </button>
+            <DefaultButton
+              @click="isColorWindow = !isColorWindow"
+              :name="'Color'"
+            />
+            <DefaultButton
+              @click="isSizeWindow = !isSizeWindow"
+              :name="'Size'"
+            />
           </div>
           <div v-if="isSizeWindow" class="options-for-figure">
-            <button v-for="item in allSize" :key="item" @click="size = item">
-              {{ item }}
-            </button>
+            <DefaultButton
+              v-for="item in allSize"
+              :key="item"
+              @click="size = item"
+              :name="item"
+            />
           </div>
           <div v-if="isColorWindow" class="options-for-figure">
-            <button
+            <DefaultButton
               v-for="item in allColor"
               :key="item"
               class="btn-color"
               :style="{ backgroundColor: item }"
               @click="color = item"
-            ></button>
+            />
           </div>
           <div class="options-for-figure">
-            <button class="clear" @click="clearPicture()">Clear</button>
-            <button class="save" @click="savePicture()">Save</button>
+            <DefaultButton @click="clearPicture()" :name="'Clear'" />
+            <DefaultButton @click="savePicture()" :name="'Save'" />
           </div>
         </div>
       </div>
@@ -57,10 +66,12 @@ import { useRouter } from "vue-router";
 import { AppRoutes } from "../router";
 
 import Modal from "../components/Modal.vue";
+import DefaultButton from "../components/buttons/DefaultButton.vue";
 
 export default defineComponent({
   components: {
-    Modal
+    Modal,
+    DefaultButton
   },
   setup() {
     const router = useRouter();
@@ -240,20 +251,9 @@ header {
     color: #fff;
   }
 
-  button {
-    margin: 10px 20px;
+  .back {
     padding: 10px;
-    border-radius: 2px;
-    font-size: 13px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 700;
-    background-color: rgba(255, 106, 0, 1);
-    &:hover {
-      opacity: 0.8;
-    }
+    background: rgba(255, 106, 0, 1);
   }
 }
 
@@ -270,7 +270,7 @@ main {
       flex-direction: column;
     }
 
-    .figure {
+    .figures {
       height: 100%;
       border: 2px solid #000;
       display: flex;
@@ -283,18 +283,9 @@ main {
         flex-direction: row;
       }
 
-      button {
-        padding: 5px;
+      .figure {
+        padding: 10px;
         margin: 5px;
-        border-radius: 2px;
-        font-size: 20px;
-        border: none;
-        cursor: pointer;
-        color: #fff;
-        background-color: #3b3b3b;
-        &:hover {
-          opacity: 0.8;
-        }
       }
     }
 
@@ -331,31 +322,9 @@ main {
         }
       }
 
-      button {
-        padding: 5px;
-        margin: 5px 10px;
-        border-radius: 2px;
-        font-size: 20px;
-        border: none;
-        cursor: pointer;
-        color: #fff;
-        background-color: #3b3b3b;
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-
       .btn-color {
         width: 20px;
         height: 20px;
-      }
-
-      .save {
-        background-color: green;
-      }
-
-      .clear {
-        background-color: blue;
       }
     }
   }

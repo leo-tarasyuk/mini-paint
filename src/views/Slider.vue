@@ -1,8 +1,6 @@
 <template>
   <header>
-    <button class="skip" @click="goHome">
-      Skip
-    </button>
+    <DefaultButton class="skip" @click="goHome" :name="'Skip'" />
   </header>
   <div class="carousel">
     <div class="buttons">
@@ -41,7 +39,12 @@ import { useRouter } from "vue-router";
 import { useStore } from "../store";
 import { AppRoutes } from "../router";
 
+import DefaultButton from "../components/buttons/DefaultButton.vue";
+
 export default defineComponent({
+  components: {
+    DefaultButton
+  },
   setup() {
     const { dispatch, getters } = useStore();
     const router = useRouter();
@@ -119,21 +122,6 @@ header {
   flex-direction: row-reverse;
   position: relative;
   z-index: 10;
-
-  button {
-    padding: 10px 20px;
-    border-radius: 2px;
-    font-size: 13px;
-    outline: none;
-    border: none;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 700;
-    background-color: rgba(255, 106, 0, 1);
-    &:hover {
-      opacity: 0.8;
-    }
-  }
 
   .skip {
     background-color: #0180da;

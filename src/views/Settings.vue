@@ -136,19 +136,7 @@
             <p>Email</p>
           </label>
           <div class="component-form">
-            <input
-              type="email"
-              v-model="user.email"
-              @blur="v$.email.$touch"
-              :class="{ invalid: v$.email.$error }"
-            />
-            <div
-              class="component-error"
-              v-for="(error, index) of v$.email.$errors"
-              :key="index"
-            >
-              {{ error.$message }}
-            </div>
+            <p class="email">{{ email }}</p>
           </div>
         </div>
       </fieldset>
@@ -259,17 +247,15 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 import useVuelidate from "@vuelidate/core";
 import {
   required,
   alpha,
-  email,
   numeric,
   minLength,
   helpers
 } from "@vuelidate/validators";
-
-import { useRouter, onBeforeRouteLeave } from "vue-router";
 
 import { useStore } from "../store";
 import { AppRoutes } from "../router";
@@ -280,11 +266,12 @@ export default defineComponent({
     const router = useRouter();
     const photo = ref<HTMLInputElement | null>(null);
     const image = ref<string | ArrayBuffer | null>(null);
+    const email = ref(localStorage.getItem("email"));
     const user = ref({
       biography: "",
       birthday: "",
       city: "",
-      email: "",
+      email: email.value,
       gender: "Male",
       id: localStorage.getItem("user"),
       image,
@@ -320,7 +307,6 @@ export default defineComponent({
         // )
       },
       city: { required, alpha },
-      email: { required, email },
       status: { required },
       job: {
         status: { required }
@@ -392,6 +378,7 @@ export default defineComponent({
       v$,
       photo,
       image,
+      email,
       user,
       currentUser,
       statusEditPropertyUser,
@@ -480,6 +467,11 @@ main {
             border: 1px solid #2f3234;
             border-radius: 2px;
             font-size: 20px;
+          }
+
+          .email {
+            width: 100%;
+            padding: 5px 0;
           }
 
           .invalid {
