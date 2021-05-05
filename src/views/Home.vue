@@ -1,171 +1,32 @@
 <template>
-  <header>
-    <div>
-      <DefaultButton
-        class="header-buttons"
-        @click="settings()"
-        :name="'Settings'"
-      />
-    </div>
-    <div></div>
-    <div class="header-component">
-      <img v-if="avatar" :src="avatar" />
-      <img
-        v-else
-        src="https://w7.pngwing.com/pngs/407/879/png-transparent-computer-icons-user-login-others-miscellaneous-monochrome-chemistry.png"
-      />
-      <p>{{ email }}</p>
-      <div>
-        <DefaultButton
-          class="header-buttons"
-          @click="signOut()"
-          :name="'Sign out'"
-        />
-      </div>
-    </div>
-  </header>
-  <main>
-    <nav>
-      <div class="button">
-        <DefaultButton
-          class="nav-buttons"
-          @click="createFile()"
-          :name="'Create file'"
-        />
-      </div>
-      <div v-if="pictures.length > 4" class="button">
-        <DefaultButton class="nav-buttons" @click="slider()" :name="'Slider'" />
-      </div>
-    </nav>
-    <h2>Pictures</h2>
-    <ul>
-      <li v-for="item in pictures" :key="item">
-        <img :src="item.img" alt="" />
-        <p>{{ item.name }}</p>
-      </li>
-    </ul>
-  </main>
+  <Main />
+  <Preloader v-show="!userProperty" />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, computed, onMounted } from "vue";
 
 import { useStore } from "../store";
-import { AppRoutes } from "../router";
 
-import DefaultButton from "../components/buttons/DefaultButton.vue";
+import Preloader from "../components/Preloader.vue";
+import Main from "../components/Main.vue";
 
 export default defineComponent({
   components: {
-    DefaultButton
+    Main,
+    Preloader
   },
   setup() {
     const { getters, dispatch } = useStore();
-    const router = useRouter();
-    const pictures = computed(() => getters["pictures/getPictures"]);
-    const userProperty = computed(() => getters["pictures/getUserProperty"]);
-    const email = ref(localStorage.getItem("email"));
-    const avatar = ref<string>("");
+    const userProperty = computed(() => getters["user/getUserProperty"]);
 
     onMounted(async () => {
-      await dispatch("pictures/getUserParams");
-      await dispatch("pictures/showPictures", []);
-      avatar.value = userProperty.value.image;
+      await dispatch("user/getUserParams");
     });
 
-    const slider = () => router.push(AppRoutes.slider);
-
-    const signOut = async (): Promise<void> => {
-      await dispatch("user/signOutUser");
-      router.replace(AppRoutes.login);
-    };
-
-    const settings = () => router.push(AppRoutes.settings);
-    const createFile = () => router.push(AppRoutes.image);
-
     return {
-      signOut,
-      settings,
-      createFile,
-      pictures,
-      userProperty,
-      email,
-      avatar,
-      slider
+      userProperty
     };
   }
 });
 </script>
-
-<style lang="scss" scoped>
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #000;
-
-  .header-component {
-    display: flex;
-    align-items: center;
-
-    img {
-      width: 20px;
-      height: 20px;
-      background-image: cover;
-    }
-
-    p {
-      padding-left: 5px;
-      color: #fff;
-    }
-  }
-
-  .header-buttons {
-    background-color: rgba(255, 106, 0, 1);
-  }
-}
-
-main {
-  nav {
-    display: flex;
-    border-bottom: 1px solid #000;
-
-    .nav-buttons {
-      background-color: #0180da;
-    }
-  }
-
-  h2 {
-    width: 100%;
-    color: rgba(255, 106, 0, 1);
-    text-align: center;
-  }
-
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    padding-top: 10px;
-
-    li {
-      list-style: none;
-      padding: 0px 10px;
-
-      p {
-        padding: 10px 0px;
-        text-align: center;
-        font-size: 18px;
-        color: #fff;
-      }
-
-      img {
-        width: 260px;
-        height: 200px;
-        background-color: #fff;
-      }
-    }
-  }
-}
-</style>

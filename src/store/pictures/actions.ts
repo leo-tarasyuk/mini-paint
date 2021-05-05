@@ -5,7 +5,7 @@ import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
 import { PicturesState } from "./types";
 import { RootState } from "./../types";
-import { Pictures, UserParameters } from "../../types";
+import { Pictures } from "../../types";
 import shuffle from "./helpers/helpers";
 
 import firebase from "firebase/app";
@@ -33,11 +33,6 @@ interface Actions {
     { commit, dispatch }: AugmentedActionContext,
     payload: Array<Pictures>
   ): void;
-  [ActionTypes.setUserParams](
-    context: AugmentedActionContext,
-    payload: UserParameters
-  ): void;
-  [ActionTypes.getUserParams]({ commit }: AugmentedActionContext): void;
 }
 
 export const actions: ActionTree<PicturesState, RootState> & Actions = {
@@ -70,27 +65,5 @@ export const actions: ActionTree<PicturesState, RootState> & Actions = {
     const pictures = await dispatch(ActionTypes.showPictures, payload);
 
     commit(MutationTypes.showPictures, shuffle(pictures));
-  },
-
-  async [ActionTypes.setUserParams](context, payload: UserParameters) {
-    const user = localStorage.getItem("user");
-
-    await firebase
-      .database()
-      .ref(`property/${user}`)
-      .set(payload);
-  },
-
-  async [ActionTypes.getUserParams]({ commit }) {
-    const user = localStorage.getItem("user");
-
-    const property = await firebase
-      .database()
-      .ref(`property/${user}`)
-      .get();
-
-    if (property.val() !== "null") {
-      commit(MutationTypes.getUserParams, property.val());
-    }
   }
 };

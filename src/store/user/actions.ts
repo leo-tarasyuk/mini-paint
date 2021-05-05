@@ -5,7 +5,7 @@ import { MutationTypes } from "./mutation-types";
 import { ActionTypes } from "./action-types";
 import { UserState } from "./types";
 import { RootState } from "./../types";
-import { User, FirebaseConfig } from "../../types";
+import { User, UserParameters, FirebaseConfig } from "../../types";
 
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -25,7 +25,7 @@ interface Actions {
     payload: FirebaseConfig
   ): Promise<firebase.firestore.Firestore>;
   [ActionTypes.registerUser](
-    { commit, state }: AugmentedActionContext,
+    { dispatch, commit, state }: AugmentedActionContext,
     payload: User
   ): Promise<string | null>;
   [ActionTypes.loginUser](
@@ -33,6 +33,11 @@ interface Actions {
     payload: User
   ): Promise<string | null>;
   [ActionTypes.signOutUser](): Promise<void>;
+  [ActionTypes.setUserParams](
+    context: AugmentedActionContext,
+    payload: UserParameters
+  ): void;
+  [ActionTypes.getUserParams]({ commit }: AugmentedActionContext): void;
 }
 
 export const actions: ActionTree<UserState, RootState> & Actions = {
@@ -42,14 +47,32 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
     return firestore;
   },
 
-  async [ActionTypes.registerUser]({ commit, state }, payload: User) {
+  async [ActionTypes.registerUser]({ dispatch, commit, state }, payload: User) {
     const user = await firebase
       .auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
       .then(data => {
         commit(MutationTypes.registerUser, data.user?.uid);
         localStorage.setItem("user", state.user);
-        localStorage.setItem("email", payload.email);
+        dispatch(ActionTypes.setUserParams, {
+          biography: "",
+          birthday: "",
+          city: "",
+          email: payload.email,
+          gender: "Male",
+          id: localStorage.getItem("user"),
+          image:
+            "https://w7.pngwing.com/pngs/407/879/png-transparent-computer-icons-user-login-others-miscellaneous-monochrome-chemistry.png",
+          job: {
+            status: "",
+            organization: "",
+            position: ""
+          },
+          name: "",
+          status: "",
+          surname: "",
+          telephone: ""
+        });
         return null;
       })
       .catch((e: Error) => {
@@ -66,7 +89,6 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
       .then(data => {
         commit(MutationTypes.loginUser, data.user?.uid);
         localStorage.setItem("user", state.user);
-        localStorage.setItem("email", payload.email);
         return null;
       })
       .catch((e: Error) => {
@@ -79,6 +101,25 @@ export const actions: ActionTree<UserState, RootState> & Actions = {
   async [ActionTypes.signOutUser]() {
     await firebase.auth().signOut();
     localStorage.setItem("user", "");
-    localStorage.setItem("email", "");
+  },
+
+  async [ActionTypes.setUserParams](context, payload: UserParameters) {
+    const user = localStorage.getItem("user");
+
+    await firebase
+      .database()
+      .ref(`property/${user}`)
+      .set(payload);
+  },
+
+  async [ActionTypes.getUserParams]({ commit }) {
+    const user = localStorage.getItem("user");
+
+    const property = await firebase
+      .database()
+      .ref(`property/${user}`)
+      .get();
+
+    commit(MutationTypes.getUserParams, property.val());
   }
 };

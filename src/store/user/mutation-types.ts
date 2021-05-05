@@ -1,4 +1,5 @@
 export enum MutationTypes {
   registerUser = "registerUser",
-  loginUser = "loginUser"
+  loginUser = "loginUser",
+  getUserParams = "getUserParams"
 }

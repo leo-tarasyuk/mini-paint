@@ -1,6 +1,6 @@
 <template>
   <div class="tour">
-    <Home v-if="tour[count].window === 'Home'" />
+    <Main v-if="tour[count].window === 'Home'" />
     <Image v-if="tour[count].window === 'Image'" />
     <div
       class="modal"
@@ -18,13 +18,13 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 
-import Home from "./Home.vue";
+import Main from "../components/Main.vue";
 import Image from "./Image.vue";
 import ModalTour from "../components/ModalTour.vue";
 
 export default defineComponent({
   components: {
-    Home,
+    Main,
     Image,
     ModalTour
   },

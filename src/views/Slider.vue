@@ -30,6 +30,7 @@
       ></i>
     </div>
   </div>
+  <Preloader v-show="!pictures.length" />
 </template>
 
 <script lang="ts">
@@ -40,10 +41,12 @@ import { useStore } from "../store";
 import { AppRoutes } from "../router";
 
 import DefaultButton from "../components/buttons/DefaultButton.vue";
+import Preloader from "../components/Preloader.vue";
 
 export default defineComponent({
   components: {
-    DefaultButton
+    DefaultButton,
+    Preloader
   },
   setup() {
     const { dispatch, getters } = useStore();

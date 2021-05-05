@@ -136,7 +136,7 @@
             <p>Email</p>
           </label>
           <div class="component-form">
-            <p class="email">{{ email }}</p>
+            <p class="email">{{ user.email }}</p>
           </div>
         </div>
       </fieldset>
@@ -221,7 +221,8 @@
               ref="photo"
               @change="onFileSelected"
             />
-            <img v-if="user.image" :src="user.image" />
+            <img v-if="!image" :src="user.image" />
+            <img v-if="image" :src="image" />
             <div
               class="component-error error-download-file"
               v-for="(error, index) of v$.image.$errors"
@@ -243,6 +244,7 @@
       </div>
     </form>
   </main>
+  <Preloader v-show="!currentUser" />
 </template>
 
 <script lang="ts">
@@ -260,18 +262,22 @@ import {
 import { useStore } from "../store";
 import { AppRoutes } from "../router";
 
+import Preloader from "../components/Preloader.vue";
+
 export default defineComponent({
+  components: {
+    Preloader
+  },
   setup() {
     const { dispatch, getters } = useStore();
     const router = useRouter();
     const photo = ref<HTMLInputElement | null>(null);
     const image = ref<string | ArrayBuffer | null>(null);
-    const email = ref(localStorage.getItem("email"));
     const user = ref({
       biography: "",
       birthday: "",
       city: "",
-      email: email.value,
+      email: "",
       gender: "Male",
       id: localStorage.getItem("user"),
       image,
@@ -285,10 +291,6 @@ export default defineComponent({
       surname: "",
       telephone: ""
     });
-    const checkValidTelephone = (value: any) => {
-      const validator = /^(375|80)(29|25|44|33)([0-9]{3})([0-9]{2})([0-9]{2})$/;
-      return validator.test(value);
-    };
     const rules = {
       surname: { required, alpha },
       name: { required, alpha, minLength: minLength(2) },
@@ -299,12 +301,8 @@ export default defineComponent({
         numeric,
         validTelephone: helpers.withMessage(
           () => "Please, write correct phone number",
-          checkValidTelephone
+          helpers.regex(/^(375|80)(29|25|44|33)([0-9]{3})([0-9]{2})([0-9]{2})$/)
         )
-        // valid: helpers.withMessage(
-        //   () => "Please, write correct phone number",
-        //   helpers.regex(/^(375|80)(29|25|44|33)([0-9]{3})([0-9]{2})([0-9]{2})$/)
-        // )
       },
       city: { required, alpha },
       status: { required },
@@ -315,14 +313,12 @@ export default defineComponent({
     };
     const v$ = useVuelidate(rules, user.value);
     const stateLeaveSettings = ref(false);
-    const currentUser = computed(() => getters["pictures/getUserProperty"]);
+    const currentUser = computed(() => getters["user/getUserProperty"]);
     const statusEditPropertyUser = ref(true);
 
     onMounted(async () => {
-      await dispatch("pictures/getUserParams");
-      if (currentUser.value !== null) {
-        user.value = Object.assign(user.value, currentUser.value);
-      }
+      await dispatch("user/getUserParams");
+      user.value = Object.assign(user.value, currentUser.value);
     });
 
     const backHome = () => router.push(AppRoutes.home);
@@ -337,7 +333,7 @@ export default defineComponent({
         v$.value.$touch();
       } else {
         stateLeaveSettings.value = true;
-        dispatch("pictures/setUserParams", user.value);
+        dispatch("user/setUserParams", user.value);
         router.push(AppRoutes.home);
       }
     };
@@ -378,7 +374,6 @@ export default defineComponent({
       v$,
       photo,
       image,
-      email,
       user,
       currentUser,
       statusEditPropertyUser,
@@ -386,8 +381,7 @@ export default defineComponent({
       backHome,
       checkEditInformation,
       sendUserInformation,
-      onFileSelected,
-      checkValidTelephone
+      onFileSelected
     };
   }
 });
